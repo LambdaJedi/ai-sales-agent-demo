@@ -1,0 +1,152 @@
+{
+  "name": "Voice AI Agent Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "voice-agent",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "a4d06284-4956-4431-8043-a1440a1210d3",
+      "name": "Voice Input Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        464,
+        400
+      ],
+      "webhookId": "4312d073-f391-4ac0-8656-6b9064fd0f4a"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Find and recommend the best type of website for {{ $json.body.message.toolCalls[0].function.arguments.message }} \nOnly output one sentence no new lines",
+        "options": {
+          "systemMessage": "You are a helpful voice assistant that processes client requests.\n\nYour task:\n1. Extract key information from the conversation\n2. Use the Internet Search tool when you need current information or research\n3. Provide helpful recommendations based on client needs\n4. Keep responses brief and conversational for voice interaction"
+        }
+      },
+      "id": "e38f06ab-00c8-45ee-bf9b-0c41c0ab099c",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        688,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n    \"results\": [\n        {\n            \"toolCallId\": \"{{ $('Voice Input Webhook').item.json.body.message.toolCalls[0].id }}\",\n            \"result\": \"{{ $('AI Agent').item.json.output }}\"\n        }\n    ]\n}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "audio/mpeg"
+              }
+            ]
+          }
+        }
+      },
+      "id": "c37805de-b2a5-47a6-b663-06aab056b58d",
+      "name": "Return Audio Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1040,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.sessionId ?? \"default\" }}"
+      },
+      "id": "0e1f4cd6-bf6c-4997-a32b-ede9138e65f2",
+      "name": "Conversation Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        768,
+        624
+      ]
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "id": "0eeab264-2d80-4558-b267-21826f3d4f3d",
+      "name": "Groq Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        640,
+        624
+      ],
+      "credentials": {
+        
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Voice Input Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Return Audio Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conversation Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "bd25560b-3a95-4720-a721-8fa344e4ece6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4334fdefa36b6ea7a600b79ed3344319cf71589d72bbc805a4a49ca99053bca3"
+  },
+  "id": "AXRIoF7au3nkDDew",
+  "tags": []
+}
