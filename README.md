@@ -64,6 +64,28 @@ Sends structured JSON back to VAPI so the AI can speak the results.
 User call → VAPI agent → N8N Webhook → AI Agent → Groq LLM  
 → Generate Recommendation → Return JSON → VAPI speaks back
 
+---
+
+flowchart LR
+    A[VAPI Voice Call] --> B[Webhook Input]
+    B --> C[AI Agent Node]
+    C --> D[Groq LLM Reasoning]
+    C --> E[Conversation Memory]
+    D --> F[Return Response to VAPI]
+
+---
+
+## **⚙️ How to Use**
+
+Import workflow.json into N8N
+
+Add your own Groq API key in N8N credentials
+
+Replace webhook URL in VAPI with your own
+
+Make a call to the agent
+
+N8N responds with the LLM-generated website recommendation
 
 ---
 
