@@ -1,49 +1,69 @@
-# AI Voice Sales Agent Demo (N8N + VAPI)
+# **AI Voice Sales Agent Demo (N8N + VAPI)**
 
-## 📌 Overview
-This repository contains a simplified, safe-to-share version of an **AI voice sales agent** built using **N8N** and **VAPI**.  
-The agent receives a phone call, gathers user requirements, and uses a **chat model** to recommend website types based on its own reasoning — **no external dataset is required**.
+## **📌 Overview**  
+This repository contains a simplified, safe-to-share version of an **AI-powered voice sales agent**, built using **N8N** and **VAPI**.  
+The agent receives a phone call, collects user requirements, and uses a **chat model** to recommend the best type of website based on its own reasoning.  
 
-All internal company data and systems have been removed.
-
----
-
-## 🔧 Tech Stack
-- **VAPI** — Voice AI call handling  
-- **N8N** — Workflow automation  
-- **Chat Model** — Reasoning + website recommendations  
+This demo does **not** use any internal datasets or company-specific infrastructure.  
+All sensitive information has been removed.
 
 ---
 
-## 🧩 Features
-- Accepts voice calls through VAPI  
-- Collects business requirements  
-- Sends structured data to N8N  
-- Chat model generates recommendations from general knowledge  
-- Sends the final answer back through VAPI  
+## **🔧 Tech Stack**
+- **VAPI** — Voice AI agent for phone calls  
+- **N8N** — Workflow automation engine  
+- **Groq Llama 3.3 70B** — High-speed LLM for reasoning  
+- **Conversation memory** — To maintain short-term context  
 
 ---
 
-## 📂 Included Files
-- `workflow.json` — Exportable N8N workflow (safe version)  
-- `screenshots/` — Workflow screenshots + VAPI test call  
-- `README.md` — Documentation  
+## **🧩 Features**
+- Handles voice calls through VAPI  
+- Extracts the user's business needs  
+- Sends user input to N8N through a webhook  
+- LLM evaluates requirements and recommends website solutions  
+- Sends structured JSON back to VAPI (which turns it to audio)  
+- Clean, simple end-to-end pipeline  
 
 ---
 
-## 🚀 How to Use
-1. Import the `workflow.json` into N8N  
-2. Update the webhook URL with your own  
-3. Connect the VAPI agent to the webhook endpoint  
-4. Configure the chat model node (your own LLM)  
-5. Make a test call and observe recommendations  
+## **📂 Included Files**
+- `workflow.json` — Sanitized N8N workflow (no credentials)  
+- `/screenshots` — Workflow and VAPI preview screenshots  
+- `README.md` — Documentation for setup and usage  
 
 ---
 
-## 📞 Example Flow
-User calls → VAPI agent listens → sends call data to N8N
-→ Chat model evaluates → produces recommendations
-→ N8N returns answer → VAPI speaks it back to the user
+## **🚀 How the Workflow Works**
+
+### **1. VAPI → Webhook**  
+The voice agent receives a call and sends input to an N8N webhook.
+
+### **2. AI Agent Node**  
+The workflow uses a LangChain Agent with a custom prompt to:
+- interpret the user’s request  
+- extract key website requirements  
+- generate a short, spoken-friendly recommendation  
+
+### **3. Groq LLM**  
+Powered by `llama-3.3-70b-versatile`, providing:
+- fast reasoning  
+- accurate website suggestions  
+- conversational phrasing  
+
+### **4. Memory Node**  
+Maintains short-term conversation history to improve responses.
+
+### **5. Return Node**  
+Sends structured JSON back to VAPI so the AI can speak the results.
+
+---
+
+## **📞 End-to-End Flow**  
+```text
+User call → VAPI agent → N8N Webhook → AI Agent → Groq LLM  
+→ Generate Recommendation → Return JSON → VAPI speaks back
+
 
 ---
 
